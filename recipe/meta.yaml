@@ -27,10 +27,14 @@ requirements:
     - wheel
   run:
     - python
-    - fiona
     - geopandas-base
+    # our geopandas-base includes already fiona
+    # see https://github.com/AnacondaRecipes/geopandas-feedstock/blob/db3ee7c59204c6ec5e797f6c208339e87ece8783/recipe/meta.yaml#L32
+    # - fiona
     - geopy
-    - matplotlib-base
+    - matplotlib-base  # [not win]
+    # win will require matplotlib (with tk/tcl)
+    - matplotlib       # [win]
     - rtree
 
 # skip these tests because they depend on json files not in the tarball
@@ -40,12 +44,6 @@ requirements:
 {% set tests_to_skip = tests_to_skip + " or test_wrong_property_raises_error" %}
 {% set tests_to_skip = tests_to_skip + " or test_gdf_to_mf_json" %}
 {% set tests_to_skip = tests_to_skip + " or test_outlier_cleaner" %}
-# skip this test on win, it requires tk
-{% set tests_to_skip = tests_to_skip + " or test_plot_does_not_alter_df" %}  # [win]
-# skip this test on win, it requires tcl
-{% set tests_to_skip = tests_to_skip + " or test_support_for_other_time_column_names" %}  # [win]
-{% set tests_to_skip = tests_to_skip + " or test_plot_exists" %}  # [win]
-{% set tests_to_skip = tests_to_skip + " or test_plot_speed_not_altering_collection" %}  # [win]
 
 test:
   imports:
