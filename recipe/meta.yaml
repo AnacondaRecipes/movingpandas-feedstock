@@ -8,6 +8,8 @@ package:
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   sha256: a84bab2473a0ee254ac10bd562b4c4c955ea69820a033be0220abd4cd2476c6e
+  patches:
+    - patches/0001-fix-long-description-utf-8.patch  # [win]
 
 build:
   number: 0
@@ -16,6 +18,8 @@ build:
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
 requirements:
+  build:
+    - m2-patch    # [win]
   host:
     - python
     - pip
@@ -36,6 +40,12 @@ requirements:
 {% set tests_to_skip = tests_to_skip + " or test_wrong_property_raises_error" %}
 {% set tests_to_skip = tests_to_skip + " or test_gdf_to_mf_json" %}
 {% set tests_to_skip = tests_to_skip + " or test_outlier_cleaner" %}
+# skip this test on win, it requires tk
+{% set tests_to_skip = tests_to_skip + " or test_plot_does_not_alter_df" %}  # [win]
+# skip this test on win, it requires tcl
+{% set tests_to_skip = tests_to_skip + " or test_support_for_other_time_column_names" %}  # [win]
+{% set tests_to_skip = tests_to_skip + " or test_plot_exists" %}  # [win]
+{% set tests_to_skip = tests_to_skip + " or test_plot_speed_not_altering_collection" %}  # [win]
 
 test:
   imports:

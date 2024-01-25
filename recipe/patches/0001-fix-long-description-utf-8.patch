@@ -1,0 +1,25 @@
+From 4dc64b90c7ffcec9475bff15cfc054f2fef1eb3d Mon Sep 17 00:00:00 2001
+From: Lorenzo Pirritano <lpirritano@anaconda.com>
+Date: Wed, 24 Jan 2024 21:41:10 -0600
+Subject: [PATCH] fix long description utf-8
+
+---
+ setup.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index b13f80f..e006cc3 100644
+--- a/setup.py
++++ b/setup.py
+@@ -1,6 +1,6 @@
+-import setuptools
++import setuptools, io
+ 
+-with open("README.md", "r") as fh:
++with io.open("README.md", "r", encoding="utf-8") as fh:
+     LONG_DESCRIPTION = fh.read()
+ 
+ # Packages that MovingPandas uses explicitly:
+-- 
+2.39.1
+
