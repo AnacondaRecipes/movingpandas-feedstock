@@ -1,40 +1,63 @@
-{% set version = "0.15rc1" %}
+{% set name = "movingpandas" %}
+{% set version = "0.17.2" %}
 
 package:
-  name: movingpandas
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/m/movingpandas/movingpandas-{{ version }}.tar.gz
-  sha256: 53b8eceaeec8a1c6f431874da6b63a3ca0ccca9a56c27ffd07c80a3b84194c1b
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: a84bab2473a0ee254ac10bd562b4c4c955ea69820a033be0220abd4cd2476c6e
 
 build:
   number: 0
-  noarch: python
-  script: "{{ PYTHON }} -m pip install . -vv"
+  skip: true  # [py<38]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
 requirements:
   host:
-    - python >=3.7
+    - python
     - pip
+    - setuptools
+    - wheel
   run:
-    - python >=3.7
+    - python
     - fiona
     - geopandas-base
     - geopy
     - matplotlib-base
     - rtree
 
+# skip these tests because they depend on json files not in the tarball
+{% set tests_to_skip = "test_mf_file" %}
+{% set tests_to_skip = tests_to_skip + " or test_mf_collection_file" %}
+{% set tests_to_skip = tests_to_skip + " or test_mf_collection_needs_id" %}
+{% set tests_to_skip = tests_to_skip + " or test_wrong_property_raises_error" %}
+{% set tests_to_skip = tests_to_skip + " or test_gdf_to_mf_json" %}
+{% set tests_to_skip = tests_to_skip + " or test_outlier_cleaner" %}
+
 test:
   imports:
     - movingpandas
+  requires:
+    - pip
+    - pytest
+  source_files:
+    - movingpandas/tests
+  commands:
+    - pip check
+    - ls
+    - pytest -v -r s -k "not({{ tests_to_skip }})" movingpandas/tests/
 
 about:
-  home: https://github.com/anitagraser/movingpandas
+  home: https://github.com/movingpandas/movingpandas
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE.txt
-  summary: 'MovingPandas implements Trajectory classes and corresponding methods based on GeoPandas'
+  summary: MovingPandas implements Trajectory classes and corresponding methods based on GeoPandas.
+  description: MovingPandas implements trajectory classes and functions built on top of GeoPandas.
+  doc_url: https://movingpandas.readthedocs.io/
+  dev_url: https://github.com/movingpandas/movingpandas
 
 extra:
   recipe-maintainers:
