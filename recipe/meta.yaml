@@ -32,9 +32,7 @@ requirements:
     # see https://github.com/AnacondaRecipes/geopandas-feedstock/blob/db3ee7c59204c6ec5e797f6c208339e87ece8783/recipe/meta.yaml#L32
     # - fiona
     - geopy
-    - matplotlib-base  # [not win]
-    # win will require matplotlib (with tk/tcl)
-    - matplotlib       # [win]
+    - matplotlib-base
     - rtree
 
 # skip these tests because they depend on json files not in the tarball
