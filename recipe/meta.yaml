@@ -46,7 +46,6 @@ test:
     - movingpandas/tests
   commands:
     - pip check
-    - ls
     - pytest -v -r s -k "not({{ tests_to_skip }})" movingpandas/tests/
 
 about:
