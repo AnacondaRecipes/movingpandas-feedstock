@@ -31,7 +31,6 @@ requirements:
     # - fiona
     - geopy
     - matplotlib-base
-    - rtree
 
 test:
   source_files:
