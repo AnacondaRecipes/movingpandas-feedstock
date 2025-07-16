@@ -8,7 +8,7 @@ package:
 source:
   - url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
     sha256: ed171d260444ed1a787b51a7c745805dc37fa4721487dd4766118a97d49b94f6
-  - url: https://github.com/movingpandas/movingpandas/archive/refs/tags/v0.22.3.tar.gz
+  - url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
     sha256: 44df0999699c5977267a8ff76856b238d457e17a8cd76d08c090e1cdb81d0219
     folder: gh_src
 
