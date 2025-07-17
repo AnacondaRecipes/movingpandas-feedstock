@@ -1,25 +1,23 @@
 {% set name = "movingpandas" %}
-{% set version = "0.17.2" %}
+{% set version = "0.22.3" %}
 
 package:
   name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: a84bab2473a0ee254ac10bd562b4c4c955ea69820a033be0220abd4cd2476c6e
-  patches:
-    - patches/0001-fix-long-description-utf-8.patch  # [win]
+  - url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+    sha256: ed171d260444ed1a787b51a7c745805dc37fa4721487dd4766118a97d49b94f6
+  - url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+    sha256: 44df0999699c5977267a8ff76856b238d457e17a8cd76d08c090e1cdb81d0219
+    folder: gh_src
 
 build:
   number: 0
-  # fiona, rtree not available for s390x
-  skip: true  # [py<38 or s390x]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+  skip: True  # [py<38]
 
 requirements:
-  build:
-    - m2-patch    # [win]
   host:
     - python
     - pip
@@ -33,27 +31,37 @@ requirements:
     # - fiona
     - geopy
     - matplotlib-base
-    - rtree
-
-# skip these tests because they depend on json files not in the tarball
-{% set tests_to_skip = "test_mf_file" %}
-{% set tests_to_skip = tests_to_skip + " or test_mf_collection_file" %}
-{% set tests_to_skip = tests_to_skip + " or test_mf_collection_needs_id" %}
-{% set tests_to_skip = tests_to_skip + " or test_wrong_property_raises_error" %}
-{% set tests_to_skip = tests_to_skip + " or test_gdf_to_mf_json" %}
-{% set tests_to_skip = tests_to_skip + " or test_outlier_cleaner" %}
 
 test:
+  source_files:
+    - gh_src/movingpandas/tests/mftrajectory.json
+    - gh_src/movingpandas/tests/movingfeatures_collection.json
+    - gh_src/movingpandas/tests/movingfeatures.json
   imports:
     - movingpandas
+    - movingpandas.geometry_utils
+    - movingpandas.io
+    - movingpandas.overlay
+    - movingpandas.point_clusterer
+    - movingpandas.tools._show_versions
+    - movingpandas.tools._warnings
+    - movingpandas.trajectory
+    - movingpandas.trajectory_aggregator
+    - movingpandas.trajectory_cleaner
+    - movingpandas.trajectory_collection
+    - movingpandas.trajectory_generalizer
+    - movingpandas.trajectory_plotter
+    - movingpandas.trajectory_splitter
+    - movingpandas.trajectory_stop_detector
+    - movingpandas.unit_utils
+  commands:
+    - pip check
+    - cp gh_src/movingpandas/tests/*.json ${SP_DIR}/movingpandas/tests  # [unix]
+    - cp gh_src/movingpandas/tests/*.json %SP_DIR%/movingpandas/tests  # [win]
+    - pytest --pyargs movingpandas.tests
   requires:
     - pip
     - pytest
-  source_files:
-    - movingpandas/tests
-  commands:
-    - pip check
-    - pytest -v -r s -k "not({{ tests_to_skip }})" movingpandas/tests/
 
 about:
   home: https://github.com/movingpandas/movingpandas
@@ -62,7 +70,7 @@ about:
   license_file: LICENSE.txt
   summary: MovingPandas implements Trajectory classes and corresponding methods based on GeoPandas.
   description: MovingPandas implements trajectory classes and functions built on top of GeoPandas.
-  doc_url: https://movingpandas.readthedocs.io/
+  doc_url: https://movingpandas.readthedocs.io
   dev_url: https://github.com/movingpandas/movingpandas
 
 extra:
